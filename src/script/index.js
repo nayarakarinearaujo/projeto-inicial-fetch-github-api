@@ -14,6 +14,7 @@ document.getElementById("input-search").addEventListener("keypress", (e) => {
   }
 });
 
+//Buscar Perfil do GitHub
 async function getUserProfile(userName) {
   const response = await fetch(`https://api.github.com/users/${userName}`);
   const userData = await response.json();
@@ -30,9 +31,11 @@ async function getUserProfile(userName) {
   document.querySelector(".profile-data").innerHTML = userInfo;
 }
 
+//Buscar Perfil do GitHub
 async function getUserRepos(userName) {
+  const limiteRepositorios = `?per_page=10`;
   const response = await fetch(
-    `https://api.github.com/users/${userName}/repos`
+    `https://api.github.com/users/${userName}/repos${limiteRepositorios}`
   );
   const reposData = await response.json();
 
