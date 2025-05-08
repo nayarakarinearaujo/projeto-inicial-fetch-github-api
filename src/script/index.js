@@ -3,6 +3,7 @@ document.getElementById("btn-search").addEventListener("click", () => {
   const userName = document.getElementById("input-search").value;
   getUserProfile(userName);
   getUserRepos(userName);
+  getEvents(userName);
 });
 
 //Buscar os dados com click do enter
@@ -18,13 +19,17 @@ document.getElementById("input-search").addEventListener("keypress", (e) => {
 async function getUserProfile(userName) {
   const response = await fetch(`https://api.github.com/users/${userName}`);
   const userData = await response.json();
-
+  console.log(userData);
   const userInfo = `
   <div class="info">
     <img src="${userData.avatar_url}" alt "Foto do perfil do usuário" />
     <div class="data">
         <h1>${userData.name ?? "Não possui nome cadastrado"}</h1>
         <p>${userData.bio ?? "Não possui bio cadastrada"}</p>
+    </div>
+    <div class="data">
+        <h2>Seguidores:${userData.followers ?? "Não possui seguidores"}</h2>
+        <h2>Seguidores:${userData.following ?? "Não possui seguidores"}</h2>
     </div>
   </div>
   `;
@@ -55,4 +60,30 @@ async function getUserRepos(userName) {
         <ul>${repoItems}</ul>
       </div>
     `;
+}
+
+async function getEvents(userName) {
+  const response = await fetch(
+    `https://api.github.com/users/${userName}/events`
+  );
+
+  const reposData = await response.json();
+
+  // Filtrar apenas os eventos PushEvent ou CreateEvent
+  const filteredEvents = reposData.filter(
+    (event) => event.type === "PushEvent"
+  );
+  console.log(reposData);
+  console.log(filteredEvents);
+
+  const eventHtml = filteredEvents.map((event) => {
+    return `
+     <div class="info">
+        <p><strong>Tipo:</strong> ${event.type}</p>
+        <p><strong>Repositório:</strong> ${event.repo.name}</p>
+      </div>
+    `;
+  });
+
+  document.querySelector(".profile-repo").innerHTML = eventHtml;
 }
